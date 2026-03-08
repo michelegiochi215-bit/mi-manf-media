@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>mi_manf.media</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAzDktEn27ivuAdUV6F4hdWzK6MSSM0GdE",
+  authDomain: "mi-manf-media.firebaseapp.com",
+  projectId: "mi-manf-media",
+  storageBucket: "mi-manf-media.firebasestorage.app",
+  messagingSenderId: "919938370806",
+  appId: "1:919938370806:web:4752e962ad6cb933b1b0d7"
+};
+const firebaseApp = initializeApp(FIREBASE_CONFIG);
+const db = getFirestore(firebaseApp);
+const DOC_REF = doc(db, "portfolio", "data");
+const PW_REF  = doc(db, "portfolio", "pw");
+window.__FB = { db, DOC_REF, PW_REF, getDoc, setDoc, onSnapshot };
+window.__FB_READY = true;
+window.dispatchEvent(new Event("fb-ready"));
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;overflow-x:hidden}
+:root{
+  --glass:rgba(255,255,255,0.08);
+  --glass-b:rgba(255,255,255,0.15);
+  --blur:blur(24px) saturate(180%);
+  --accent:#c8a96e;
+  --accent2:#e8c98a;
+  --muted:rgba(255,255,255,0.55);
+  --r:20px;
+  --purple:#7c5cbf;
+  --danger:#ff5f5f;
+  --green:#4fc87a;
+}
+
+/* BG ORBS */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.25;animation:orb linear infinite}
+.o1{width:600px;height:600px;background:radial-gradient(circle,#7c5cbf,#3a2a6e);top:-200px;left:-150px;animation-duration:20s}
+.o2{width:500px;height:500px;background:radial-gradient(circle,#c8a96e,#7a5a20);top:30%;right:-200px;animation-duration:25s;animation-delay:-8s}
+.o3{width:700px;height:700px;background:radial-gradient(circle,#1a3a6e,#0d1f3c);bottom:-300px;left:20%;animation-duration:30s;animation-delay:-15s}
+.o4{width:400px;height:400px;background:radial-gradient(circle,#6e3a5c,#3a1a30);top:60%;left:-100px;animation-duration:22s;animation-delay:-5s}
+@keyframes orb{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(40px,-30px) scale(1.05)}50%{transform:translate(-20px,40px) scale(.95)}75%{transform:translate(-40px,-20px) scale(1.02)}}
+
+.glass{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--glass-b);border-radius:var(--r)}
+
+/* ===== APP SHELL ===== */
+.app{position:relative;z-index:2;max-width:440px;margin:0 auto;min-height:100vh}
+
+/* ===== HEADER ===== */
+.header{padding:52px 20px 20px;text-align:center;animation:fadeD .7s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes fadeD{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.logo-ring{width:82px;height:82px;margin:0 auto 14px;border-radius:24px;background:var(--glass);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:1px solid var(--glass-b);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 32px rgba(200,169,110,.2),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
+.logo-ring::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(transparent 240deg,rgba(200,169,110,.4) 280deg,transparent 320deg);animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.logo-inner{position:relative;z-index:1}
+.logo-ring img.logo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:24px;z-index:2}
+.brand-name{font-family:'Instrument Serif',serif;font-size:26px;background:linear-gradient(135deg,#fff 0%,var(--accent2) 50%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-sub{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:3px;font-weight:300}
+
+/* ===== SEARCH BAR ===== */
+.search-wrap{padding:0 20px 20px;position:relative;animation:fadeU .6s .1s both}
+@keyframes fadeU{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.search-box{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:12px 18px;transition:all .3s}
+.search-box:focus-within{border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.05)}
+.search-icon{font-size:16px;opacity:.6;flex-shrink:0}
+.search-inp{flex:1;background:none;border:none;outline:none;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif}
+.search-inp::placeholder{color:var(--muted)}
+.search-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0;display:none}
+.search-clear.show{display:block}
+.search-results{position:absolute;top:calc(100% - 8px);left:20px;right:20px;background:rgba(10,8,20,.97);border:1px solid rgba(255,255,255,.12);border-radius:16px;z-index:100;overflow:hidden;display:none;box-shadow:0 16px 40px rgba(0,0,0,.6)}
+.search-results.show{display:block}
+.sr-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;transition:background .2s;border-bottom:1px solid rgba(255,255,255,.05)}
+.sr-item:last-child{border-bottom:none}
+.sr-item:hover{background:rgba(255,255,255,.06)}
+.sr-icon{font-size:20px;width:36px;height:36px;background:rgba(255,255,255,.06);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sr-title{font-size:13px;font-weight:600}
+.sr-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.sr-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+
+/* ===== HOMEPAGE — BIG CATEGORY BUTTONS ===== */
+.home-view{padding:0 20px 100px;animation:fadeU .6s .15s both}
+.home-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat-btn{position:relative;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,.1);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:all .35s cubic-bezier(.34,1.56,.64,1);background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+.cat-btn:active{transform:scale(.96)}
+.cat-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);pointer-events:none}
+.cat-btn::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cat-color,var(--accent)),transparent);opacity:0;transition:opacity .3s}
+.cat-btn:hover::after,.cat-btn:focus::after{opacity:1}
+.cat-btn:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(255,255,255,.2);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.cat-btn-icon{font-size:38px;position:relative;z-index:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+.cat-btn-name{font-size:13px;font-weight:600;color:#fff;position:relative;z-index:1;text-align:center;padding:0 8px}
+.cat-btn-count{font-size:10px;color:var(--muted);position:relative;z-index:1}
+.cat-btn-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25}
+
+/* ===== BREADCRUMB NAV ===== */
+.breadcrumb{display:flex;align-items:center;gap:6px;padding:0 20px 16px;flex-wrap:wrap}
+.bc-item{font-size:12px;color:var(--muted);cursor:pointer;transition:color .2s;white-space:nowrap}
+.bc-item:hover{color:#fff}
+.bc-item.active{color:var(--accent);font-weight:600;cursor:default}
+.bc-sep{font-size:11px;color:rgba(255,255,255,.25)}
+.bc-back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .25s;flex-shrink:0;margin-right:4px}
+.bc-back:hover{background:rgba(255,255,255,.14)}
+
+/* ===== SUBCAT LIST (livello 2) ===== */
+.subcat-view{padding:0 20px 100px;animation:fadeU .4s both}
+.view-title{font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:4px;padding:0 0 4px}
+.view-subtitle{font-size:12px;color:var(--muted);margin-bottom:18px}
+.subcat-list{display:flex;flex-direction:column;gap:10px}
+.subcat-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1);background:var(--glass);border:1px solid var(--glass-b)}
+.subcat-item:hover{transform:translateX(4px);border-color:rgba(200,169,110,.3);background:rgba(200,169,110,.05)}
+.subcat-item:active{transform:scale(.98)}
+.si-icon{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.si-info{flex:1;min-width:0}
+.si-name{font-size:15px;font-weight:600;margin-bottom:2px}
+.si-meta{font-size:12px;color:var(--muted)}
+.si-arrow{font-size:16px;color:var(--muted);opacity:.6}
+
+/* ===== EVENT LIST (livello 3) ===== */
+.event-view{padding:0 20px 100px;animation:fadeU .4s both}
+.event-list{display:flex;flex-direction:column;gap:10px}
+.event-item{padding:16px;border-radius:16px;cursor:pointer;transition:all .3s;background:var(--glass);border:1px solid var(--glass-b);position:relative;overflow:hidden}
+.event-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.event-item:hover{transform:translateY(-2px);border-color:rgba(200,169,110,.3);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.ei-tag{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);background:rgba(200,169,110,.1);padding:3px 9px;border-radius:20px;border:1px solid rgba(200,169,110,.2);display:inline-block;margin-bottom:8px}
+.ei-title{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:6px;line-height:1.2}
+.ei-meta{display:flex;gap:12px;flex-wrap:wrap}
+.ei-meta span{font-size:12px;color:var(--muted)}
+
+/* ===== GALLERY VIEW (livello 4) ===== */
+.gallery-view{padding:0 0 100px;animation:fadeU .4s both}
+.gallery-header{padding:0 20px 16px}
+.gallery-info{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:4px}
+.gallery-meta{font-size:12px;color:var(--muted)}
+
+/* Photo grid */
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:0 0 8px}
+.photo-grid .pg-item{position:relative;aspect-ratio:1;overflow:hidden;cursor:pointer;background:#111}
+.photo-grid .pg-item:nth-child(5n+1){grid-column:span 2;aspect-ratio:16/9}
+.pg-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.pg-item:hover img{transform:scale(1.05)}
+.pg-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,#1a1a2e,#0f3460)}
+
+/* ===== CAROUSEL (nella galleria) ===== */
+.car-wrap{margin:0 0 20px;overflow:hidden;position:relative;touch-action:pan-y}
+.car-outer{overflow:hidden;position:relative;width:100%}
+.car-track{display:flex;will-change:transform;transition:transform .45s cubic-bezier(.77,0,.175,1)}
+.car-slide{flex:0 0 88%;width:88%;margin-right:12px;position:relative;border-radius:18px;overflow:hidden;cursor:pointer;background:#111;border:1px solid rgba(255,255,255,.07);box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.car-slide:first-child{margin-left:20px}
+.car-slide img{width:100%;height:340px;object-fit:cover;display:block;pointer-events:none;-webkit-user-drag:none}
+.car-ph{width:100%;height:340px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.car-ph-icon{font-size:56px;filter:drop-shadow(0 4px 16px rgba(200,169,110,.4));animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.car-overlay{position:absolute;bottom:0;left:0;right:0;padding:40px 16px 14px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);pointer-events:none}
+.car-label{font-size:13px;font-weight:600;color:#fff}
+.car-dots{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px 0 4px}
+.car-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s cubic-bezier(.34,1.56,.64,1);cursor:pointer;border:none}
+.car-dot.active{width:20px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 2px 8px rgba(200,169,110,.4)}
+.car-btn{position:absolute;top:50%;transform:translateY(calc(-50% - 14px));width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;z-index:5;transition:all .25s;user-select:none}
+.car-btn:hover{background:rgba(200,169,110,.3)}
+.car-btn.left{left:8px}
+.car-btn.right{right:8px}
+.car-btn.hide{opacity:0;pointer-events:none}
+.car-counter{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;font-size:11px;color:rgba(255,255,255,.85);padding:3px 10px;font-weight:600;z-index:5;pointer-events:none}
+
+/* ===== ABOUT VIEW ===== */
+.about-view{padding:0 20px 100px;animation:fadeU .4s both}
+.about-card{padding:24px 20px;margin-bottom:14px}
+.about-av{width:66px;height:66px;border-radius:20px;background:rgba(200,169,110,.15);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:12px;overflow:hidden}
+.about-av img{width:100%;height:100%;object-fit:cover;border-radius:18px}
+.about-name{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:2px}
+.about-handle{font-size:13px;color:var(--accent);margin-bottom:10px}
+.about-bio{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.gear-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.gear-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 10px;font-size:12px}
+.gear-lbl{color:var(--accent);font-size:9px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px}
+
+/* ===== CTA BOX ===== */
+.cta-box{margin:0 20px 20px;padding:20px;text-align:center}
+.cta-txt{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cta-btn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a0f00;font-weight:700;font-size:14px;padding:13px 26px;border-radius:50px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 8px 24px rgba(200,169,110,.3);transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.cta-btn:hover{transform:scale(1.05) translateY(-2px);box-shadow:0 16px 40px rgba(200,169,110,.45)}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:50;padding:8px 16px 12px;background:rgba(10,8,20,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.07)}
+.bn-inner{display:flex;gap:4px}
+.bn-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border-radius:12px;border:none;background:transparent;cursor:pointer;transition:all .25s;color:var(--muted);font-family:'DM Sans',sans-serif}
+.bn-btn.active{color:var(--accent);background:rgba(200,169,110,.1)}
+.bn-btn:hover:not(.active){color:#fff;background:rgba(255,255,255,.06)}
+.bn-icon{font-size:19px;line-height:1}
+.bn-label{font-size:10px;font-weight:600;letter-spacing:.3px}
+
+/* ===== LIGHTBOX ===== */
+.lb{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
+.lb.open{opacity:1;pointer-events:all}
+.lb-inner{max-width:400px;width:100%;text-align:center;transform:scale(.92);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.lb.open .lb-inner{transform:scale(1)}
+.lb-img{width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);margin-bottom:10px;background:rgba(255,255,255,.03);min-height:180px;display:flex;align-items:center;justify-content:center}
+.lb-img img{width:100%;display:block;max-height:70vh;object-fit:contain}
+.lb-close{position:absolute;top:16px;right:16px;width:40px;height:40px;background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--glass-b);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .3s}
+.lb-close:hover{transform:rotate(90deg);background:rgba(255,255,255,.18)}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);display:none;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#fff;transition:all .25s}
+.lb-nav:hover{background:rgba(200,169,110,.3)}
+.lb-nav.left{left:10px}
+.lb-nav.right{right:10px}
+.lb-nav.show{display:flex}
+.lb-counter{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ===== LOCK BTN ===== */
+.lock-btn{position:fixed;bottom:80px;right:16px;z-index:60;width:44px;height:44px;border-radius:50%;background:rgba(20,10,40,.8);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(124,92,191,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;transition:all .3s;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.lock-btn:hover{background:rgba(124,92,191,.25);border-color:rgba(124,92,191,.6);transform:scale(1.08)}
+.lock-btn.on{border-color:rgba(200,169,110,.5);background:rgba(40,30,10,.8)}
+
+/* ===== PW MODAL ===== */
+.pw-modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .3s}
+.pw-modal.open{opacity:1;pointer-events:all}
+.pw-box{width:100%;max-width:320px;padding:30px 26px;background:rgba(18,10,36,.97);border:1px solid rgba(124,92,191,.3);border-radius:26px;backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);transform:scale(.92);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.pw-modal.open .pw-box{transform:scale(1)}
+.pw-icon{font-size:36px;margin-bottom:12px}
+.pw-title{font-family:'Instrument Serif',serif;font-size:21px;margin-bottom:4px}
+.pw-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.pw-inp{width:100%;padding:12px 15px;background:rgba(255,255,255,.06);border:1px solid rgba(124,92,191,.25);border-radius:13px;font-size:16px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .3s;margin-bottom:10px;letter-spacing:3px}
+.pw-inp:focus{border-color:rgba(124,92,191,.7)}
+.pw-inp.err{border-color:var(--danger);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.pw-btn{width:100%;padding:12px;border:none;border-radius:13px;background:linear-gradient(135deg,var(--purple),#a07ee0);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 22px rgba(124,92,191,.3);transition:all .3s}
+.pw-btn:hover{transform:translateY(-2px)}
+.pw-err{font-size:12px;color:var(--danger);text-align:center;margin-bottom:8px;min-height:16px}
+.pw-cancel{display:block;text-align:center;margin-top:10px;font-size:13px;color:var(--muted);cursor:pointer}
+.pw-cancel:hover{color:#fff}
+
+/* ===== ADMIN PANEL ===== */
+.admin{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.94);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .3s}
+.admin.open{opacity:1;pointer-events:all}
+.admin-hdr{position:sticky;top:0;z-index:10;background:rgba(10,5,25,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(124,92,191,.2);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.admin-hdr-l{font-family:'Instrument Serif',serif;font-size:19px}
+.admin-hdr-s{font-size:10px;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+.admin-hdr-btns{display:flex;gap:7px;align-items:center}
+.admin-body{padding:16px;max-width:500px;margin:0 auto}
+.admin-tabs{display:flex;gap:5px;margin-bottom:14px;background:rgba(255,255,255,.04);border-radius:12px;padding:4px}
+.admin-tab{flex:1;padding:7px 4px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .25s;font-weight:500}
+.admin-tab.active{background:rgba(124,92,191,.22);color:#a07ee0;border:1px solid rgba(124,92,191,.28)}
+.admin-sec-title{font-size:10px;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid rgba(124,92,191,.18)}
+.acard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px;margin-bottom:9px}
+.albl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.ainp,.ata{width:100%;padding:8px 11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:9px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .25s}
+.ata{resize:vertical;min-height:65px;line-height:1.5}
+.ainp:focus,.ata:focus{border-color:rgba(124,92,191,.55)}
+.afield{margin-bottom:9px}
+
+/* ADMIN — CAT ACCORDION */
+.adm-cat{border:1px solid rgba(124,92,191,.2);border-radius:14px;overflow:hidden;background:rgba(124,92,191,.04);margin-bottom:10px}
+.adm-cat-hdr{display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;user-select:none;transition:background .2s}
+.adm-cat-hdr:hover{background:rgba(255,255,255,.04)}
+.adm-cat-icon{font-size:18px}
+.adm-cat-name{font-size:14px;font-weight:600;color:var(--accent);flex:1}
+.adm-cat-arrow{font-size:10px;color:var(--muted);transition:transform .3s}
+.adm-cat-arrow.open{transform:rotate(180deg)}
+.adm-cat-body{display:none;padding:0 14px 14px}
+.adm-cat-body.open{display:block}
+
+/* ADMIN — SUBCAT */
+.adm-sub{border:1px solid rgba(255,255,255,.07);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.02);margin-bottom:7px}
+.adm-sub-hdr{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none;transition:background .2s}
+.adm-sub-hdr:hover{background:rgba(255,255,255,.04)}
+.adm-sub-name{font-size:13px;font-weight:600;flex:1;color:rgba(255,255,255,.8)}
+.adm-sub-arrow{font-size:10px;color:var(--muted);transition:transform .3s}
+.adm-sub-arrow.open{transform:rotate(180deg)}
+.adm-sub-body{display:none;padding:0 12px 12px}
+.adm-sub-body.open{display:block}
+
+/* ADMIN — EVENT ACCORDION */
+.ev-acc{margin-bottom:7px;border:1px solid rgba(255,255,255,.06);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.01)}
+.ev-acc-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;user-select:none;transition:background .2s}
+.ev-acc-hdr:hover{background:rgba(255,255,255,.04)}
+.ev-acc-title{font-size:12px;font-weight:600;color:var(--accent2);display:flex;align-items:center;gap:7px;flex:1;min-width:0}
+.ev-acc-title span.name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.ev-acc-arrow{font-size:10px;color:var(--muted);transition:transform .3s;flex-shrink:0}
+.ev-acc-arrow.open{transform:rotate(180deg)}
+.ev-acc-body{display:none;padding:0 12px 12px}
+.ev-acc-body.open{display:block}
+.ph-count{font-size:10px;background:rgba(200,169,110,.12);color:var(--accent2);padding:2px 7px;border-radius:9px;font-weight:500;flex-shrink:0}
+
+/* PHOTO THUMBS */
+.ph-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:7px;margin-bottom:9px}
+.ph-thumb{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);cursor:pointer}
+.ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-thumb-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ph-thumb-ov{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;transition:all .2s}
+.ph-thumb:hover .ph-thumb-ov{background:rgba(0,0,0,.72);opacity:1}
+.ph-lbl-inp{width:calc(100% - 6px);padding:2px 4px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.14);border-radius:4px;font-size:8px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;text-align:center}
+.ph-btns{display:flex;gap:3px}
+.ph-btn{width:24px;height:24px;border-radius:5px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s}
+.ph-btn.del{background:rgba(255,80,80,.8);color:#fff}
+.ph-btn.rep{background:rgba(124,92,191,.8);color:#fff}
+
+/* UPLOAD ZONE */
+.upzone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:16px;border:2px dashed rgba(124,92,191,.35);border-radius:12px;background:rgba(124,92,191,.05);cursor:pointer;transition:all .3s;text-align:center;margin-top:7px}
+.upzone:hover{background:rgba(124,92,191,.14);border-color:rgba(124,92,191,.65)}
+.upzone-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#a07ee0);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:0 4px 12px rgba(124,92,191,.35)}
+.upzone-title{font-size:12px;font-weight:600;color:#a07ee0}
+.upzone-sub{font-size:10px;color:var(--muted)}
+
+/* BUTTONS */
+.btn{padding:7px 13px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .25s}
+.btn-p{background:linear-gradient(135deg,var(--purple),#a07ee0);color:#fff}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(124,92,191,.35)}
+.btn-d{background:rgba(255,80,80,.12);color:#ff6b6b;border:1px solid rgba(255,80,80,.22)}
+.btn-d:hover{background:rgba(255,80,80,.22)}
+.btn-ok{background:rgba(80,200,120,.12);color:#4fc87a;border:1px solid rgba(80,200,120,.22)}
+.btn-ok:hover{background:rgba(80,200,120,.22)}
+.btn-add{width:100%;padding:9px;border-radius:10px;border:1px dashed rgba(124,92,191,.3);background:rgba(124,92,191,.05);color:var(--purple);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .25s;margin-top:5px}
+.btn-add:hover{background:rgba(124,92,191,.12);border-color:rgba(124,92,191,.5)}
+.sec-box{background:rgba(255,80,80,.04);border:1px solid rgba(255,80,80,.12);border-radius:12px;padding:12px;margin-bottom:14px}
+
+/* BANNER / TOAST */
+.banner{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(80px);background:linear-gradient(135deg,#1a3a1a,#0f2a0f);border:1px solid rgba(80,200,120,.28);color:#4fc87a;padding:11px 20px;border-radius:50px;font-size:13px;font-weight:600;z-index:600;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;white-space:nowrap;max-width:90vw;text-overflow:ellipsis;overflow:hidden}
+.banner.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;opacity:.7}
+.loading-spinner{width:36px;height:36px;border:3px solid rgba(200,169,110,.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+.loading-txt{font-size:13px;color:var(--muted)}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);margin:4px 0 18px}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(200,169,110,.2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="bg"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div></div>
+
+<div class="app" id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-ring"><span class="logo-inner" id="pub-logo-emoji">📸</span></div>
+    <div class="brand-name" id="pub-name">mi_manf.media</div>
+    <div class="brand-sub" id="pub-sub">Visual Storytelling</div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input class="search-inp" id="searchInp" placeholder="Cerca evento, pista, categoria..." oninput="doSearch(this.value)">
+      <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+    </div>
+    <div class="search-results" id="searchRes"></div>
+  </div>
+
+  <!-- MAIN CONTENT AREA -->
+  <div id="mainContent"></div>
+
+  <!-- CTA -->
+  <div class="cta-box glass" id="ctaBox" style="display:none">
+    <div class="cta-txt" id="pub-cta-txt">Hai un progetto in mente? Parliamone 🤝</div>
+    <a class="cta-btn" id="pub-cta-btn" href="#" target="_blank">📸 Seguimi su Instagram</a>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bn-inner" id="bottomNav"></div>
+</div>
+
+<!-- LOCK BTN -->
+<div class="lock-btn" id="lockBtn" onclick="toggleAdmin()">🔒</div>
+
+<!-- PW MODAL -->
+<div class="pw-modal" id="pwModal">
+  <div class="pw-box">
+    <div class="pw-icon">🔐</div>
+    <div class="pw-title">Area Riservata</div>
+    <div class="pw-sub">Solo tu puoi modificare questo portfolio</div>
+    <input class="pw-inp" type="password" id="pwInp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="pw-err" id="pwErr"></div>
+    <button class="pw-btn" onclick="doLogin()">Accedi →</button>
+    <span class="pw-cancel" onclick="closePw()">Annulla</span>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin" id="adminPanel">
+  <div class="admin-hdr">
+    <div>
+      <div class="admin-hdr-l">⚙️ Admin Panel</div>
+      <div class="admin-hdr-s">mi_manf.media</div>
+    </div>
+    <div class="admin-hdr-btns">
+      <button class="btn btn-ok" onclick="saveAll()">💾 Salva</button>
+      <div class="btn btn-d" style="padding:7px 10px" onclick="closeAdmin()">✕</div>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="aTab('cat',this)">📂 Contenuti</button>
+      <button class="admin-tab" onclick="aTab('pro',this)">👤 Profilo</button>
+      <button class="admin-tab" onclick="aTab('sec',this)">🔐 Sicurezza</button>
+    </div>
+
+    <!-- CATEGORIES TAB -->
+    <div id="tab-cat">
+      <div class="admin-sec-title">📂 Categorie → Sotto-categorie → Eventi → Foto</div>
+      <div id="catList"></div>
+      <button class="btn-add" onclick="addCat()">＋ Nuova Categoria</button>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="tab-pro" style="display:none">
+      <div class="admin-sec-title">👤 Profilo</div>
+      <div class="acard">
+        <div class="afield"><label class="albl">Nome / Brand</label><input class="ainp" id="ad-name"></div>
+        <div class="afield"><label class="albl">Sottotitolo</label><input class="ainp" id="ad-sub"></div>
+        <div class="afield"><label class="albl">Bio</label><textarea class="ata" id="ad-bio"></textarea></div>
+        <div class="afield"><label class="albl">Link Instagram</label><input class="ainp" id="ad-ig"></div>
+        <div class="afield"><label class="albl">Testo bottone contatti</label><input class="ainp" id="ad-cta"></div>
+        <div class="afield">
+          <label class="albl">Foto profilo / Logo</label>
+          <label class="upzone" style="margin-top:0">
+            <input type="file" accept="image/*" style="display:none" onchange="uploadLogo(event)">
+            <div class="upzone-icon">🖼</div>
+            <div class="upzone-title">Carica foto profilo</div>
+            <div class="upzone-sub">Verrà usata come logo nell'header</div>
+          </label>
+        </div>
+      </div>
+      <div class="admin-sec-title" style="margin-top:14px">🔧 Attrezzatura</div>
+      <div class="acard"><div id="gearList"></div></div>
+      <button class="btn-add" onclick="addGear()">＋ Aggiungi voce</button>
+    </div>
+
+    <!-- SECURITY TAB -->
+    <div id="tab-sec" style="display:none">
+      <div class="admin-sec-title">🔐 Cambia Password</div>
+      <div class="sec-box">
+        <div class="afield"><label class="albl">Password Attuale</label><input class="ainp" type="password" id="s-old" placeholder="••••••••"></div>
+        <div class="afield"><label class="albl">Nuova Password</label><input class="ainp" type="password" id="s-new" placeholder="••••••••"></div>
+        <div class="afield"><label class="albl">Conferma</label><input class="ainp" type="password" id="s-conf" placeholder="••••••••"></div>
+        <div id="s-err" style="font-size:12px;color:var(--danger);min-height:16px;margin-bottom:8px"></div>
+        <button class="btn btn-p" onclick="changePw()">Aggiorna Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="lbClose()">
+  <div class="lb-inner" onclick="event.stopPropagation()">
+    <div class="lb-img" id="lb-img"></div>
+    <div class="lb-counter" id="lb-count"></div>
+  </div>
+  <div class="lb-close" onclick="lbClose()">✕</div>
+  <div class="lb-nav left" id="lb-prev" onclick="lbPrev()">‹</div>
+  <div class="lb-nav right" id="lb-next" onclick="lbNext()">›</div>
+</div>
+
+<div class="banner" id="banner"></div>
+
+<script>
+// ===================== DATA =====================
+const DEFAULT_PW = 'Z@ino2010';
+let PW = localStorage.getItem('mf_pw') || DEFAULT_PW;
+let loggedIn = false;
+
+// Struttura nuova: cats → subcats → events → photos
+const DEF = {
+  name:'mi_manf.media', sub:'Visual Storytelling',
+  bio:'Fotografo appassionato di automotive e visual storytelling. Ogni scatto racconta una storia.',
+  ig:'https://instagram.com/mi_manf.media', cta:'Hai un progetto in mente? Parliamone 🤝',
+  logo:'',
+  gear:[{l:'Camera',v:'La tua camera'},{l:'Obiettivo',v:'Il tuo obiettivo'},{l:'Editing',v:'Lightroom / PS'},{l:'Specialty',v:'Automotive'}],
+  cats:[
+    {id:'autodromo', name:'Autodromo', icon:'🏁', color:'#e8573a',
+     subcats:[
+       {id:'s1', name:'Monza', icon:'🏟', events:[
+         {id:'e1', title:'Track Day', date:'15 Marzo 2025', photos:[]}
+       ]}
+     ]},
+    {id:'eventi', name:'Eventi', icon:'📍', color:'#7c5cbf',
+     subcats:[]},
+    {id:'shooting', name:'Shooting Privati', icon:'📸', color:'#c8a96e',
+     subcats:[]},
+    {id:'ristoranti', name:'Ristoranti', icon:'🍽', color:'#4fc87a',
+     subcats:[]}
+  ]
+};
+
+// ===================== CLOUDINARY =====================
+const CLD_CLOUD = 'dwi7t3sxo';
+const CLD_PRESET = 'mi manf';
+
+function compressImage(file, maxPx=1920, quality=0.82) {
+  return new Promise((resolve) => {
+    const img = new Image(); const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let {width,height}=img;
+      if(width>maxPx||height>maxPx){if(width>height){height=Math.round(height*maxPx/width);width=maxPx;}else{width=Math.round(width*maxPx/height);height=maxPx;}}
+      const canvas=document.createElement('canvas'); canvas.width=width;canvas.height=height;
+      canvas.getContext('2d').drawImage(img,0,0,width,height);
+      canvas.toBlob(blob=>resolve(blob||file),'image/jpeg',quality);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);resolve(file);}; img.src=url;
+  });
+}
+
+async function uploadToCloudinary(file) {
+  const toUpload = file.size > 800*1024 ? await compressImage(file) : file;
+  const fd = new FormData();
+  fd.append('file', toUpload);
+  fd.append('upload_preset', CLD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`, {method:'POST', body:fd});
+  if(!res.ok) {
+    const err = await res.json().catch(()=>({error:{message:'Errore sconosciuto'}}));
+    throw new Error(err.error?.message || 'Upload fallito: ' + res.status);
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
+// ===================== FIREBASE STORAGE =====================
+async function saveData() {
+  try { localStorage.setItem('mf_v2', JSON.stringify(D)); } catch(ex){}
+  if(window.__FB_READY) {
+    try { await window.__FB.setDoc(window.__FB.DOC_REF, { payload: JSON.stringify(D) }); return true; }
+    catch(ex){ return false; }
+  }
+  return true;
+}
+function loadData() {
+  try { const raw = localStorage.getItem('mf_v2'); return raw ? JSON.parse(raw) : null; } catch(ex){ return null; }
+}
+async function loadFromFirebase() {
+  if(!window.__FB_READY) return false;
+  try {
+    const snap = await window.__FB.getDoc(window.__FB.DOC_REF);
+    if(snap.exists()) {
+      const loaded = JSON.parse(snap.data().payload);
+      // Migra vecchia struttura se necessario
+      D = migrateLegacy(loaded);
+      localStorage.setItem('mf_v2', JSON.stringify(D));
+      renderAll();
+      return true;
+    }
+    return false;
+  } catch(ex){ return false; }
+}
+function initFirebaseSync() {
+  if(!window.__FB_READY) return;
+  window.__FB.onSnapshot(window.__FB.DOC_REF, (snap) => {
+    if(!snap.exists()) return;
+    try {
+      const loaded = JSON.parse(snap.data().payload);
+      D = migrateLegacy(loaded);
+      localStorage.setItem('mf_v2', JSON.stringify(D));
+      renderAll();
+      if(document.getElementById('adminPanel').classList.contains('open')){ fillProfile(); renderGear(); renderAdminCats(); }
+    } catch(ex){}
+  });
+}
+
+// Migra vecchia struttura (cats con events diretti) alla nuova (cats → subcats → events)
+function migrateLegacy(data) {
+  if(!data) return JSON.parse(JSON.stringify(DEF));
+  if(data.cats && data.cats[0] && data.cats[0].subcats !== undefined) return data; // già nuova
+  // È vecchia struttura
+  const newCats = (data.cats||[]).map(cat => ({
+    id: cat.id,
+    name: cat.name.replace(/^[\S]+\s*/,''), // rimuove emoji dal nome
+    icon: cat.name.match(/^(\S+)/)?.[1] || '📁',
+    color: '#c8a96e',
+    subcats: cat.events && cat.events.length ? [{
+      id: 's_migrated_'+cat.id,
+      name: 'Galleria',
+      icon: '🖼',
+      events: cat.events.map(ev => ({
+        id: ev.id,
+        title: ev.title.replace(/\n/,' '),
+        date: ev.date,
+        photos: ev.photos || []
+      }))
+    }] : []
+  }));
+  return {...JSON.parse(JSON.stringify(DEF)), ...data, cats: newCats.length ? newCats : JSON.parse(JSON.stringify(DEF)).cats};
+}
+
+// ===================== NAVIGATION STATE =====================
+// view: 'home' | 'subcat' | 'events' | 'gallery' | 'about'
+let NAV = { view:'home', catId:null, subcatId:null, eventId:null };
+
+function goHome() {
+  NAV = {view:'home', catId:null, subcatId:null, eventId:null};
+  renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goCat(catId) {
+  NAV = {view:'subcat', catId, subcatId:null, eventId:null};
+  renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goSubcat(catId, subcatId) {
+  NAV = {view:'events', catId, subcatId, eventId:null};
+  renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goEvent(catId, subcatId, eventId) {
+  NAV = {view:'gallery', catId, subcatId, eventId};
+  renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goAbout() {
+  NAV = {view:'about', catId:null, subcatId:null, eventId:null};
+  renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goBack() {
+  if(NAV.view==='gallery') { goSubcat(NAV.catId, NAV.subcatId); }
+  else if(NAV.view==='events') { goCat(NAV.catId); }
+  else if(NAV.view==='subcat') { goHome(); }
+  else { goHome(); }
+}
+
+function getCat(id){ return D.cats.find(c=>c.id===id); }
+function getSubcat(catId,subcatId){ const c=getCat(catId); return c?.subcats?.find(s=>s.id===subcatId); }
+function getEvent(catId,subcatId,evId){ const s=getSubcat(catId,subcatId); return s?.events?.find(e=>e.id===evId); }
+
+// ===================== RENDER ALL =====================
+function renderAll() {
+  renderBottomNav();
+  renderContent();
+  // CTA always visible on home and about
+  const ctaBox = document.getElementById('ctaBox');
+  ctaBox.style.display = (NAV.view==='home'||NAV.view==='about') ? '' : 'none';
+  document.getElementById('pub-name').textContent = D.name;
+  document.getElementById('pub-sub').textContent = D.sub;
+  document.getElementById('pub-cta-txt').textContent = D.cta;
+  document.getElementById('pub-cta-btn').href = D.ig;
+  // logo
+  const emoji = document.getElementById('pub-logo-emoji');
+  const ring = emoji.parentElement;
+  const old = ring.querySelector('img.logo-img'); if(old) old.remove();
+  if(D.logo){const img=document.createElement('img');img.className='logo-img';img.src=D.logo;ring.appendChild(img);}
+}
+
+function renderBottomNav() {
+  const nav = document.getElementById('bottomNav');
+  nav.innerHTML='';
+  // Home
+  const homeBtn = mkBN('🏠','Home', NAV.view==='home', goHome);
+  nav.appendChild(homeBtn);
+  // Cats
+  D.cats.forEach(cat => {
+    const btn = mkBN(cat.icon, cat.name.length>9?cat.name.slice(0,9)+'…':cat.name, NAV.view!=='about'&&NAV.catId===cat.id, ()=>goCat(cat.id));
+    nav.appendChild(btn);
+  });
+  // About
+  const aboutBtn = mkBN('👤','About', NAV.view==='about', goAbout);
+  nav.appendChild(aboutBtn);
+}
+
+function mkBN(icon, label, active, fn) {
+  const b = document.createElement('button');
+  b.className = 'bn-btn' + (active?' active':'');
+  b.innerHTML = `<span class="bn-icon">${icon}</span><span class="bn-label">${label}</span>`;
+  b.onclick = fn;
+  return b;
+}
+
+function renderContent() {
+  const mc = document.getElementById('mainContent');
+  if(NAV.view==='home') { mc.innerHTML=''; mc.appendChild(renderHome()); return; }
+  if(NAV.view==='subcat') { mc.innerHTML=''; mc.appendChild(renderSubcatView()); return; }
+  if(NAV.view==='events') { mc.innerHTML=''; mc.appendChild(renderEventsView()); return; }
+  if(NAV.view==='gallery') { mc.innerHTML=''; mc.appendChild(renderGalleryView()); return; }
+  if(NAV.view==='about') { mc.innerHTML=''; mc.appendChild(renderAboutView()); return; }
+}
+
+// ===== HOME VIEW =====
+function renderHome() {
+  const div = document.createElement('div');
+  div.className = 'home-view';
+
+  // stats bar
+  let evCount=0, phCount=0;
+  D.cats.forEach(c=>(c.subcats||[]).forEach(s=>(s.events||[]).forEach(e=>{evCount++;phCount+=e.photos.length;})));
+  const statsHTML = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px">
+    ${[['🎬',evCount,'Events'],['📷',phCount+'+','Scatti'],['📂',D.cats.length,'Categorie']].map(([ic,n,l])=>`
+    <div class="glass" style="padding:12px 8px;text-align:center;border-radius:16px">
+      <div style="font-size:18px;margin-bottom:4px">${ic}</div>
+      <div style="font-family:'Instrument Serif',serif;font-size:20px;color:var(--accent2)">${n}</div>
+      <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px">${l}</div>
+    </div>`).join('')}
+  </div>`;
+  div.innerHTML = statsHTML + '<div class="home-title">Esplora</div>';
+
+  const grid = document.createElement('div');
+  grid.className = 'cat-grid';
+  D.cats.forEach(cat => {
+    const evTot = (cat.subcats||[]).reduce((a,s)=>a+(s.events||[]).length,0);
+    const phTot = (cat.subcats||[]).reduce((a,s)=>a+(s.events||[]).reduce((b,e)=>b+e.photos.length,0),0);
+    const btn = document.createElement('div');
+    btn.className = 'cat-btn';
+    btn.style.setProperty('--cat-color', cat.color||'var(--accent)');
+    // gradient bg based on color
+    btn.style.background = `linear-gradient(135deg, rgba(0,0,0,0.1), ${hexToRgba(cat.color||'#c8a96e',0.12)})`;
+    btn.style.borderColor = hexToRgba(cat.color||'#c8a96e', 0.25);
+    btn.innerHTML = `
+      <div class="cat-btn-icon">${cat.icon||'📁'}</div>
+      <div class="cat-btn-name">${cat.name}</div>
+      <div class="cat-btn-count">${evTot} eventi · ${phTot} foto</div>`;
+    btn.onclick = ()=>goCat(cat.id);
+    grid.appendChild(btn);
+  });
+  div.appendChild(grid);
+  return div;
+}
+
+function hexToRgba(hex, alpha) {
+  try {
+    const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  } catch(e){ return `rgba(200,169,110,${alpha})`; }
+}
+
+// ===== SUBCAT VIEW (livello 2) =====
+function renderSubcatView() {
+  const cat = getCat(NAV.catId);
+  if(!cat) { goHome(); return document.createElement('div'); }
+  const div = document.createElement('div');
+  div.className = 'subcat-view';
+  div.appendChild(renderBreadcrumb([{label:'Home',fn:goHome},{label:cat.name}]));
+  const title = document.createElement('div');
+  title.innerHTML = `<div class="view-title">${cat.icon} ${cat.name}</div><div class="view-subtitle">${(cat.subcats||[]).length} sotto-categorie</div>`;
+  div.appendChild(title);
+  const list = document.createElement('div');
+  list.className = 'subcat-list';
+  if(!(cat.subcats||[]).length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:13px">Nessuna sotto-categoria. Aggiungila dall\'admin.</div>';
+  }
+  (cat.subcats||[]).forEach(sub => {
+    const evCount = (sub.events||[]).length;
+    const phCount = (sub.events||[]).reduce((a,e)=>a+e.photos.length,0);
+    const item = document.createElement('div');
+    item.className = 'subcat-item';
+    item.innerHTML = `<div class="si-icon">${sub.icon||'📁'}</div><div class="si-info"><div class="si-name">${sub.name}</div><div class="si-meta">${evCount} eventi · ${phCount} foto</div></div><div class="si-arrow">›</div>`;
+    item.onclick = ()=>goSubcat(cat.id, sub.id);
+    list.appendChild(item);
+  });
+  div.appendChild(list);
+  return div;
+}
+
+// ===== EVENTS VIEW (livello 3) =====
+function renderEventsView() {
+  const cat = getCat(NAV.catId);
+  const sub = getSubcat(NAV.catId, NAV.subcatId);
+  if(!cat||!sub) { goHome(); return document.createElement('div'); }
+  const div = document.createElement('div');
+  div.className = 'event-view';
+  div.appendChild(renderBreadcrumb([{label:'Home',fn:goHome},{label:cat.name,fn:()=>goCat(cat.id)},{label:sub.name}]));
+  const title = document.createElement('div');
+  title.innerHTML = `<div class="view-title">${sub.icon||'📁'} ${sub.name}</div><div class="view-subtitle">${(sub.events||[]).length} eventi disponibili</div>`;
+  div.appendChild(title);
+  const list = document.createElement('div');
+  list.className = 'event-list';
+  if(!(sub.events||[]).length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:13px">Nessun evento. Aggiungilo dall\'admin.</div>';
+  }
+  (sub.events||[]).forEach(ev => {
+    const item = document.createElement('div');
+    item.className = 'event-item';
+    item.innerHTML = `
+      <span class="ei-tag">${cat.icon} ${cat.name}</span>
+      <div class="ei-title">${ev.title}</div>
+      <div class="ei-meta">
+        <span>📅 ${ev.date}</span>
+        <span>📷 ${ev.photos.length} scatti</span>
+      </div>`;
+    item.onclick = ()=>goEvent(cat.id, sub.id, ev.id);
+    list.appendChild(item);
+  });
+  div.appendChild(list);
+  return div;
+}
+
+// ===== GALLERY VIEW (livello 4) =====
+const CS = {};
+function renderGalleryView() {
+  const cat = getCat(NAV.catId);
+  const sub = getSubcat(NAV.catId, NAV.subcatId);
+  const ev = getEvent(NAV.catId, NAV.subcatId, NAV.eventId);
+  if(!cat||!sub||!ev) { goHome(); return document.createElement('div'); }
+
+  const div = document.createElement('div');
+  div.className = 'gallery-view';
+
+  div.appendChild(renderBreadcrumb([
+    {label:'Home',fn:goHome},
+    {label:cat.name,fn:()=>goCat(cat.id)},
+    {label:sub.name,fn:()=>goSubcat(cat.id,sub.id)},
+    {label:ev.title}
+  ]));
+
+  const hdr = document.createElement('div');
+  hdr.className = 'gallery-header';
+  hdr.innerHTML = `<div class="gallery-info">${ev.title}</div><div class="gallery-meta">📅 ${ev.date} · 📷 ${ev.photos.length} scatti</div>`;
+  div.appendChild(hdr);
+
+  if(!ev.photos.length) {
+    div.innerHTML += '<div style="text-align:center;padding:60px 20px;color:var(--muted);font-size:13px">Nessuna foto per questo evento.</div>';
+    return div;
+  }
+
+  // Grid foto pulita (senza nome, senza numeri)
+  const grid = document.createElement('div');
+  grid.className = 'photo-grid';
+  ev.photos.forEach((ph,pi)=>{
+    const item = document.createElement('div');
+    item.className = 'pg-item';
+    item.onclick = ()=>lbOpen(ev.photos, pi);
+    if(ph.url) {
+      item.innerHTML = `<img src="${ph.url}" alt="" loading="lazy">`;
+    } else {
+      item.innerHTML = `<div class="pg-placeholder">${ph.icon||'📷'}</div>`;
+    }
+    grid.appendChild(item);
+  });
+  div.appendChild(grid);
+
+  return div;
+}
+
+// ===== ABOUT VIEW =====
+function renderAboutView() {
+  const div = document.createElement('div');
+  div.className = 'about-view';
+  const gearHTML = D.gear.map(g=>`<div class="gear-item"><span class="gear-lbl">${g.l}</span>${g.v}</div>`).join('');
+  const avHTML = D.logo ? `<div class="about-av"><img src="${D.logo}" alt="logo"></div>` : `<div class="about-av">📷</div>`;
+  div.innerHTML = `<div class="about-card glass">${avHTML}<div class="about-name">${D.name}</div><div class="about-handle">@${D.name.replace('.','.').replace('mi_manf.media','mi_manf.media')}</div><div class="about-bio">${D.bio}</div><div class="divider"></div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Equipment</div><div class="gear-grid">${gearHTML}</div></div>`;
+  return div;
+}
+
+// ===== BREADCRUMB =====
+function renderBreadcrumb(items) {
+  const div = document.createElement('div');
+  div.className = 'breadcrumb';
+  const back = document.createElement('div');
+  back.className = 'bc-back';
+  back.textContent = '‹';
+  back.onclick = goBack;
+  div.appendChild(back);
+  items.forEach((item,i)=>{
+    const span = document.createElement('span');
+    span.className = 'bc-item' + (i===items.length-1?' active':'');
+    span.textContent = item.label;
+    if(item.fn) span.onclick = item.fn;
+    div.appendChild(span);
+    if(i<items.length-1){
+      const sep = document.createElement('span');
+      sep.className='bc-sep'; sep.textContent='›';
+      div.appendChild(sep);
+    }
+  });
+  return div;
+}
+
+// ===================== SEARCH =====================
+function doSearch(q) {
+  const clear = document.getElementById('searchClear');
+  const res = document.getElementById('searchRes');
+  clear.classList.toggle('show', q.length>0);
+  q = q.trim().toLowerCase();
+  if(!q){ res.classList.remove('show'); res.innerHTML=''; return; }
+  const hits = [];
+  D.cats.forEach(cat=>{
+    if(cat.name.toLowerCase().includes(q)) hits.push({type:'cat',cat});
+    (cat.subcats||[]).forEach(sub=>{
+      if(sub.name.toLowerCase().includes(q)) hits.push({type:'sub',cat,sub});
+      (sub.events||[]).forEach(ev=>{
+        if([ev.title,ev.date].some(t=>t.toLowerCase().includes(q))) hits.push({type:'ev',cat,sub,ev});
+      });
+    });
+  });
+  if(!hits.length){ res.innerHTML='<div class="sr-empty">Nessun risultato per "'+q+'"</div>'; }
+  else {
+    res.innerHTML = hits.slice(0,8).map((h,i)=>{
+      if(h.type==='cat') return `<div class="sr-item" onclick="clearSearch();goCat('${h.cat.id}')"><div class="sr-icon">${h.cat.icon}</div><div><div class="sr-title">${h.cat.name}</div><div class="sr-sub">Categoria</div></div></div>`;
+      if(h.type==='sub') return `<div class="sr-item" onclick="clearSearch();goSubcat('${h.cat.id}','${h.sub.id}')"><div class="sr-icon">${h.sub.icon||'📁'}</div><div><div class="sr-title">${h.sub.name}</div><div class="sr-sub">${h.cat.name}</div></div></div>`;
+      return `<div class="sr-item" onclick="clearSearch();goEvent('${h.cat.id}','${h.sub.id}','${h.ev.id}')"><div class="sr-icon">📅</div><div><div class="sr-title">${h.ev.title}</div><div class="sr-sub">${h.cat.name} · ${h.sub.name} · ${h.ev.date}</div></div></div>`;
+    }).join('');
+  }
+  res.classList.add('show');
+}
+function clearSearch() {
+  document.getElementById('searchInp').value='';
+  document.getElementById('searchClear').classList.remove('show');
+  document.getElementById('searchRes').classList.remove('show');
+  document.getElementById('searchRes').innerHTML='';
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('.search-wrap')) { document.getElementById('searchRes').classList.remove('show'); } });
+
+// ===================== LIGHTBOX =====================
+let LB_PHOTOS=[], LB_IDX=0;
+function lbOpen(photos,idx){ LB_PHOTOS=photos; LB_IDX=idx; lbDraw(); document.getElementById('lb').classList.add('open'); document.body.style.overflow='hidden'; }
+function lbDraw(){
+  const ph=LB_PHOTOS[LB_IDX];
+  const imgEl=document.getElementById('lb-img');
+  imgEl.innerHTML=ph.url?`<img src="${ph.url}" alt="" loading="lazy">`:`<span style="font-size:70px;padding:28px">${ph.icon||'📷'}</span>`;
+  document.getElementById('lb-count').textContent=LB_PHOTOS.length>1?`${LB_IDX+1} / ${LB_PHOTOS.length}`:'';
+  document.getElementById('lb-prev').classList.toggle('show',LB_IDX>0);
+  document.getElementById('lb-next').classList.toggle('show',LB_IDX<LB_PHOTOS.length-1);
+}
+function lbPrev(){ if(LB_IDX>0){LB_IDX--;lbDraw();} }
+function lbNext(){ if(LB_IDX<LB_PHOTOS.length-1){LB_IDX++;lbDraw();} }
+function lbClose(){ document.getElementById('lb').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){lbClose();closeAdmin();} if(e.key==='ArrowLeft')lbPrev(); if(e.key==='ArrowRight')lbNext(); });
+// swipe lightbox
+(()=>{let sx=0; const lb=document.getElementById('lb');
+  lb.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+  lb.addEventListener('touchend',e=>{const dx=sx-e.changedTouches[0].clientX; if(Math.abs(dx)>40){dx>0?lbNext():lbPrev();}},{passive:true});
+})();
+
+// ===================== AUTH =====================
+function toggleAdmin(){ if(loggedIn){openAdmin();}else{document.getElementById('pwModal').classList.add('open');setTimeout(()=>document.getElementById('pwInp').focus(),300);} }
+function doLogin(){
+  const v=document.getElementById('pwInp').value;
+  if(v===PW){loggedIn=true;document.getElementById('pwModal').classList.remove('open');document.getElementById('pwInp').value='';document.getElementById('pwErr').textContent='';document.getElementById('lockBtn').textContent='🔓';document.getElementById('lockBtn').classList.add('on');openAdmin();}
+  else{document.getElementById('pwErr').textContent='❌ Password errata';document.getElementById('pwInp').classList.add('err');setTimeout(()=>document.getElementById('pwInp').classList.remove('err'),500);}
+}
+function closePw(){document.getElementById('pwModal').classList.remove('open');document.getElementById('pwInp').value='';document.getElementById('pwErr').textContent='';}
+function changePw(){
+  const o=document.getElementById('s-old').value,n=document.getElementById('s-new').value,c=document.getElementById('s-conf').value;
+  const err=document.getElementById('s-err');
+  if(o!==PW){err.textContent='❌ Password attuale errata';return;}
+  if(n.length<4){err.textContent='❌ Minimo 4 caratteri';return;}
+  if(n!==c){err.textContent='❌ Le password non coincidono';return;}
+  PW=n;localStorage.setItem('mf_pw',PW);
+  err.textContent='';['s-old','s-new','s-conf'].forEach(id=>document.getElementById(id).value='');
+  toast('🔐 Password aggiornata!');
+}
+
+// ===================== ADMIN =====================
+function openAdmin(){ fillProfile(); renderGear(); renderAdminCats(); document.getElementById('adminPanel').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeAdmin(){ document.getElementById('adminPanel').classList.remove('open'); document.body.style.overflow=''; loggedIn=false; document.getElementById('lockBtn').textContent='🔒'; document.getElementById('lockBtn').classList.remove('on'); }
+function aTab(name,el){ ['cat','pro','sec'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'':'none'); document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+function fillProfile(){ document.getElementById('ad-name').value=D.name; document.getElementById('ad-sub').value=D.sub; document.getElementById('ad-bio').value=D.bio; document.getElementById('ad-ig').value=D.ig; document.getElementById('ad-cta').value=D.cta; }
+function uploadLogo(e){ const f=e.target.files[0];if(!f)return;toast('⏳ Caricamento logo...');uploadToCloudinary(f).then(url=>{D.logo=url;saveData();renderAll();toast('🖼 Logo aggiornato!');}).catch(err=>toast('❌ '+err.message)); }
+
+function renderGear(){
+  const el=document.getElementById('gearList');el.innerHTML='';
+  D.gear.forEach((g,i)=>{
+    const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:8px';
+    row.innerHTML=`<div style="flex:1"><input class="ainp" style="margin-bottom:4px" value="${g.l}" placeholder="Label" onchange="D.gear[${i}].l=this.value"><input class="ainp" value="${g.v}" placeholder="Valore" onchange="D.gear[${i}].v=this.value"></div><button class="btn btn-d" onclick="D.gear.splice(${i},1);renderGear()">🗑</button>`;
+    el.appendChild(row);
+  });
+}
+function addGear(){ D.gear.push({l:'Nuovo',v:''}); renderGear(); }
+
+// ===== ADMIN — RENDER CATS (3 livelli) =====
+function renderAdminCats(){
+  const el=document.getElementById('catList'); el.innerHTML='';
+  D.cats.forEach((cat,ci)=>{
+    const box=document.createElement('div');
+    box.className='adm-cat';
+    const aid='admc'+ci;
+
+    // Cat header con emoji, nome, colore
+    const hdr=document.createElement('div');
+    hdr.className='adm-cat-hdr';
+    hdr.innerHTML=`
+      <span class="adm-cat-icon">${cat.icon||'📁'}</span>
+      <span class="adm-cat-name">${cat.name}</span>
+      <div onclick="event.stopPropagation()" style="display:flex;gap:5px">
+        <button class="btn btn-d" style="font-size:11px;padding:5px 8px" onclick="deleteCat(${ci})">🗑</button>
+      </div>
+      <span class="adm-cat-arrow" id="${aid}a">▼</span>`;
+    hdr.onclick=()=>accToggle2(aid,'adm-cat');
+    box.appendChild(hdr);
+
+    const body=document.createElement('div');
+    body.className='adm-cat-body'; body.id=aid+'b';
+
+    // Cat settings
+    body.innerHTML=`
+      <div class="afield" style="margin-top:10px"><label class="albl">Nome</label><input class="ainp" value="${cat.name}" onchange="D.cats[${ci}].name=this.value;renderAdminCats()"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="afield"><label class="albl">Icona (emoji)</label><input class="ainp" value="${cat.icon||'📁'}" onchange="D.cats[${ci}].icon=this.value;renderAdminCats()"></div>
+        <div class="afield"><label class="albl">Colore (hex)</label><input class="ainp" value="${cat.color||'#c8a96e'}" placeholder="#c8a96e" onchange="D.cats[${ci}].color=this.value;renderAdminCats()"></div>
+      </div>
+      <div class="admin-sec-title" style="margin-top:0">Sotto-categorie</div>`;
+
+    // Subcats
+    (cat.subcats||[]).forEach((sub,si)=>{
+      const said=`adms${ci}_${si}`;
+      const subAcc=document.createElement('div');
+      subAcc.className='adm-sub';
+      const subHdr=document.createElement('div');
+      subHdr.className='adm-sub-hdr';
+      subHdr.innerHTML=`<span style="font-size:16px">${sub.icon||'📁'}</span><span class="adm-sub-name">${sub.name}</span><div onclick="event.stopPropagation()" style="display:flex;gap:5px"><button class="btn btn-d" style="font-size:10px;padding:4px 7px" onclick="deleteSub(${ci},${si})">🗑</button></div><span class="adm-sub-arrow" id="${said}a">▼</span>`;
+      subHdr.onclick=()=>accToggle2(said,'adm-sub');
+      subAcc.appendChild(subHdr);
+      const subBody=document.createElement('div');
+      subBody.className='adm-sub-body'; subBody.id=said+'b';
+      subBody.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 8px">
+        <div class="afield"><label class="albl">Nome</label><input class="ainp" value="${sub.name}" onchange="D.cats[${ci}].subcats[${si}].name=this.value;renderAdminCats()"></div>
+        <div class="afield"><label class="albl">Icona</label><input class="ainp" value="${sub.icon||'📁'}" onchange="D.cats[${ci}].subcats[${si}].icon=this.value;renderAdminCats()"></div>
+      </div>
+      <div class="admin-sec-title" style="margin-top:2px">Eventi</div>`;
+      // Events
+      (sub.events||[]).forEach((ev,ei)=>{
+        const evid=`adme${ci}_${si}_${ei}`;
+        const evAcc=document.createElement('div');
+        evAcc.className='ev-acc';
+        const evHdr=document.createElement('div');
+        evHdr.className='ev-acc-hdr';
+        evHdr.innerHTML=`<div class="ev-acc-title"><span class="ev-acc-arrow" id="${evid}a">▼</span><span class="name">${ev.title}</span><span class="ph-count">${ev.photos.length} foto</span></div><div onclick="event.stopPropagation()"><button class="btn btn-d" style="font-size:10px;padding:4px 7px" onclick="deleteEv(${ci},${si},${ei})">🗑</button></div>`;
+        evHdr.onclick=()=>accToggle2(evid,'ev-acc');
+        evAcc.appendChild(evHdr);
+        const evBody=document.createElement('div');
+        evBody.className='ev-acc-body'; evBody.id=evid+'b';
+        evBody.innerHTML=buildEvBody(ci,si,ei,ev);
+        evAcc.appendChild(evBody);
+        subBody.appendChild(evAcc);
+      });
+      const addEvBtn=document.createElement('button');
+      addEvBtn.className='btn-add';addEvBtn.textContent='＋ Aggiungi Evento';
+      addEvBtn.onclick=()=>addEv(ci,si);
+      subBody.appendChild(addEvBtn);
+      subAcc.appendChild(subBody);
+      body.appendChild(subAcc);
+    });
+    const addSubBtn=document.createElement('button');
+    addSubBtn.className='btn-add';addSubBtn.textContent='＋ Nuova Sotto-categoria';
+    addSubBtn.onclick=()=>addSub(ci);
+    body.appendChild(addSubBtn);
+    box.appendChild(body);
+    el.appendChild(box);
+  });
+  setTimeout(initDragDrop,80);
+}
+
+function buildEvBody(ci,si,ei,ev){
+  const stripHTML=(ev.photos||[]).map((ph,pi)=>`
+    <div class="ph-thumb">
+      ${ph.url?`<img src="${ph.url}" alt="">`:`<div class="ph-thumb-ph">${ph.icon||'📷'}</div>`}
+      <div class="ph-thumb-ov">
+        <div class="ph-btns">
+          <label class="ph-btn rep" title="Sostituisci" onclick="event.stopPropagation()">📁<input type="file" accept="image/*" style="display:none" onchange="replacePhoto(event,${ci},${si},${ei},${pi})"></label>
+          <button class="ph-btn del" onclick="event.stopPropagation();deletePhoto(${ci},${si},${ei},${pi})">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 8px">
+      <div class="afield"><label class="albl">Titolo</label><input class="ainp" value="${ev.title}" onchange="D.cats[${ci}].subcats[${si}].events[${ei}].title=this.value"></div>
+      <div class="afield"><label class="albl">Data</label><input class="ainp" value="${ev.date}" onchange="D.cats[${ci}].subcats[${si}].events[${ei}].date=this.value"></div>
+    </div>
+    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">📷 ${(ev.photos||[]).length} foto</div>
+    <div class="ph-strip">${stripHTML}</div>
+    <label class="upzone" id="uz${ci}_${si}_${ei}">
+      <input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(event,${ci},${si},${ei})">
+      <div class="upzone-icon">＋</div>
+      <div class="upzone-title">Aggiungi foto</div>
+      <div class="upzone-sub">Seleziona quante vuoi • JPG PNG WEBP • trascina qui</div>
+    </label>`;
+}
+
+function accToggle2(id,cls){
+  const body=document.getElementById(id+'b'),arrow=document.getElementById(id+'a');
+  if(!body)return;
+  const op=body.classList.contains('open');
+  body.classList.toggle('open',!op);
+  if(arrow)arrow.classList.toggle('open',!op);
+}
+
+// CRUD
+function addCat(){ D.cats.push({id:'c'+Date.now(),name:'Nuova Categoria',icon:'📁',color:'#c8a96e',subcats:[]}); renderAdminCats(); }
+function deleteCat(ci){ if(confirm('Eliminare categoria e tutto il suo contenuto?')){D.cats.splice(ci,1);renderAdminCats();renderAll();} }
+function addSub(ci){ D.cats[ci].subcats=D.cats[ci].subcats||[]; D.cats[ci].subcats.push({id:'s'+Date.now(),name:'Nuova Sotto-categoria',icon:'📁',events:[]}); renderAdminCats(); }
+function deleteSub(ci,si){ if(confirm('Eliminare sotto-categoria?')){D.cats[ci].subcats.splice(si,1);renderAdminCats();renderAll();} }
+function addEv(ci,si){ D.cats[ci].subcats[si].events=D.cats[ci].subcats[si].events||[]; D.cats[ci].subcats[si].events.push({id:'e'+Date.now(),title:'Nuovo Evento',date:'2025',photos:[]}); renderAdminCats(); }
+function deleteEv(ci,si,ei){ if(confirm('Eliminare evento?')){D.cats[ci].subcats[si].events.splice(ei,1);renderAdminCats();renderAll();} }
+function deletePhoto(ci,si,ei,pi){ D.cats[ci].subcats[si].events[ei].photos.splice(pi,1); renderAdminCats(); }
+
+function replacePhoto(e,ci,si,ei,pi){
+  const f=e.target.files[0];if(!f)return;
+  toast('⏳ Caricamento su Cloudinary...');
+  uploadToCloudinary(f).then(url=>{D.cats[ci].subcats[si].events[ei].photos[pi].url=url;renderAdminCats();saveData();toast('📸 Foto sostituita!');}).catch(err=>toast('❌ '+err.message));
+}
+
+function addPhotos(e,ci,si,ei){
+  const files=Array.from(e.target.files);if(!files.length)return;
+  e.target.value='';
+  let done=0;const tot=files.length;
+  toast(`⏳ Caricamento ${tot} foto...`);
+  files.forEach((f,i)=>{
+    uploadToCloudinary(f).then(url=>{
+      D.cats[ci].subcats[si].events[ei].photos.push({id:'p'+Date.now()+'_'+i,url,icon:'📷'});
+      done++;
+      if(done===tot){renderAdminCats();saveData();renderAll();toast(`✅ ${tot} foto caricate!`);}
+    }).catch(err=>{done++;toast('❌ '+err.message);});
+  });
+}
+
+function initDragDrop(){
+  document.querySelectorAll('.upzone').forEach(zone=>{
+    if(zone._dd)return;zone._dd=true;
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.background='rgba(124,92,191,.2)';zone.style.borderColor='rgba(124,92,191,.8)';});
+    zone.addEventListener('dragleave',()=>{zone.style.background='';zone.style.borderColor='';});
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.style.background='';zone.style.borderColor='';
+      const parts=zone.id.replace('uz','').split('_');
+      const ci=parseInt(parts[0]),si=parseInt(parts[1]),ei=parseInt(parts[2]);
+      const files=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+      if(!files.length)return;
+      let done=0;const tot=files.length;
+      toast(`⏳ Caricamento ${tot} foto...`);
+      files.forEach((f,i)=>{
+        uploadToCloudinary(f).then(url=>{D.cats[ci].subcats[si].events[ei].photos.push({id:'p'+Date.now()+'_'+i,url,icon:'📷'});done++;if(done===tot){renderAdminCats();saveData();renderAll();toast(`✅ ${tot} foto!`);}}).catch(err=>{done++;toast('❌ '+err.message);});
+      });
+    });
+  });
+}
+
+async function saveAll(){
+  D.name=document.getElementById('ad-name').value;
+  D.sub=document.getElementById('ad-sub').value;
+  D.bio=document.getElementById('ad-bio').value;
+  D.ig=document.getElementById('ad-ig').value;
+  D.cta=document.getElementById('ad-cta').value;
+  const ok=await saveData();
+  renderAll();
+  toast(ok&&window.__FB_READY?'☁️ Salvato su tutti i dispositivi!':'✅ Salvato!');
+}
+
+function toast(msg){ const b=document.getElementById('banner');b.textContent=msg;b.classList.add('show');setTimeout(()=>b.classList.remove('show'),2800); }
+
+// ===================== START =====================
+let D = null;
+D = loadData() || JSON.parse(JSON.stringify(DEF));
+// Migra se necessario
+D = migrateLegacy(D);
+renderAll();
+
+function startFirebase(){
+  loadFromFirebase().then(()=>{initFirebaseSync();toast('☁️ Cloud sync attivo');}).catch(()=>{});
+}
+if(window.__FB_READY){startFirebase();}else{window.addEventListener('fb-ready',startFirebase,{once:true});}
+</script>
+</body>
+</html>
